@@ -1,11 +1,9 @@
-# main.py
-
 import os  # Usado para percorrer diretórios e arquivos
 import re  # Usado para extrair e-mails com expressões regulares
 from analisador_enron import Grafo  # Importa a classe Grafo do arquivo analisador_enron.py
 
 # Caminho onde estão os arquivos de e-mail do Enron
-diretorio_emails = "C:/Users/Usuario/Documents/vscode/pyhton/TDEGrafos/Amostra Enron - 2016/brawner-s/all_documents"
+diretorio_emails = "C:/vscode/python/MetodosQuant/grafos/Tde_Grafos/Amostra Enron - 2016/brawner-s/all_documents"
 
 # Função que extrai e-mails de uma linha de texto usando expressão regular
 def extrair_emails(linha):
@@ -46,10 +44,10 @@ for root, _, files in os.walk(diretorio_emails):
                 total_processados += 1  # Conta um e-mail processado
         except Exception as e:
             # Caso ocorra erro ao ler algum arquivo
-            print(f"Erro ao processar {caminho_arquivo}: {e}")
+            print(f"Erro ao processar {caminho_arquivo}: {e}\n")
 
 # Mostra o total de e-mails que foram processados
-print(f"Total de e-mails processados: {total_processados}")
+print(f"Total de e-mails processados: {total_processados}\n")
 
 # Salva a lista de adjacência do grafo em um arquivo .txt
 grafo.salvar_lista_adjacencia("lista_adjacencia_enron.txt")
@@ -58,9 +56,9 @@ grafo.salvar_lista_adjacencia("lista_adjacencia_enron.txt")
 ordem, tamanho, isolados, top_saida, top_entrada = grafo.analise_geral()
 
 # Imprime resultados da análise
-print(f"Ordem (número de vértices): {ordem}")
-print(f"Tamanho (número de arestas): {tamanho}")
-print(f"Vértices isolados: {isolados}")
+print(f"Ordem (número de vértices): {ordem}\n")
+print(f"Tamanho (número de arestas): {tamanho}\n")
+print(f"Vértices isolados: {isolados}\n")
 
 print("Top 20 graus de saída:")
 for email, grau in top_saida:
@@ -72,7 +70,7 @@ for email, grau in top_entrada:
 
 # Verifica se o grafo é Euleriano
 eh_euleriano, motivo = grafo.euleriano()
-print(f"É Euleriano? {eh_euleriano}. {motivo}")
+print(f"É Euleriano? {eh_euleriano}. {motivo}\n")
 
 # Verifica os vértices até uma distância D de um determinado e-mail (N)
 N = "sandra.brawner@enron.com"  # E-mail de origem para análise de distância
@@ -85,4 +83,4 @@ for v, d in vizinhos:
 # Calcula o diâmetro do grafo e o caminho correspondente
 diametro, caminho = grafo.calcular_diametro()
 print(f"Diâmetro do grafo: {diametro}")
-print(f"Caminho correspondente: {caminho}")
+print(f"Caminho correspondente: {caminho}\n")

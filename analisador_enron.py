@@ -1,5 +1,3 @@
-# analisador_enron.py
-
 from collections import defaultdict, deque  # defaultdict facilita criação de dicionários com valores padrão
 import heapq  # heapq permite trabalhar com filas de prioridade (usado no Dijkstra)
 
@@ -22,22 +20,22 @@ class Grafo:
                     peso = self.adj[origem][destino]
                     f.write(f"{origem} -> {destino} [peso: {peso}]\n")
 
-    # Retorna várias informações do grafo:
-    # - Quantidade de vértices
-    # - Quantidade de arestas
-    # - Vértices isolados
-    # - Top 20 com maior grau de saída
-    # - Top 20 com maior grau de entrada
+
     def analise_geral(self):
         # Junta todos os vértices que aparecem como origem ou destino
         vertices = set(self.adj.keys()) | {d for destinos in self.adj.values() for d in destinos}
         arestas = sum(len(destinos) for destinos in self.adj.values())
 
         # Identifica vértices isolados (sem entrada nem saída)
-        isolados = [v for v in vertices if all(v not in self.adj[o] for o in self.adj) and v not in self.adj]
+        isolados = []
+        for v in vertices:
+            if v not in self.adj and all(v not in vizinhos for vizinhos in self.adj.values()):
+                isolados.append(v)
 
         # Calcula grau de saída de cada vértice
-        grau_saida = {v: sum(self.adj[v].values()) for v in self.adj}
+        grau_saida = {}
+        for vertice, vizinhos in self.adj.items():
+            grau_saida[vertice] = sum(vizinhos.values())
 
         # Calcula grau de entrada de cada vértice
         grau_entrada = defaultdict(int)
