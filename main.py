@@ -1,29 +1,26 @@
 # main.py
 
-import os  # Usado para percorrer diretórios e arquivos
-import re  # Usado para extrair e-mails com expressões regulares
-from analisador_enron import Grafo  # Importa a classe Grafo do arquivo analisador_enron.py
+import os 
+import re  #expressões regulares
+from analisador_enron import Grafo
 
-# Caminho onde estão os arquivos de e-mail do Enron
 diretorio_emails = "C:/Users/Usuario/Documents/vscode/pyhton/TDEGrafos/Amostra Enron - 2016/brawner-s/all_documents"
 
-# Função que extrai e-mails de uma linha de texto usando expressão regular
+# Função expressão regular
 def extrair_emails(linha):
     return re.findall(r"[\w\.-]+@[\w\.-]+", linha.lower())
 
-# Cria uma instância do grafo
 grafo = Grafo()
 
-# Inicializa um contador de e-mails processados
 total_processados = 0
 
-# Percorre todos os arquivos dentro do diretório especificado
+# Percorre todos os arquivos
 for root, _, files in os.walk(diretorio_emails):
     for nome_arquivo in files:
         caminho_arquivo = os.path.join(root, nome_arquivo)
         try:
             with open(caminho_arquivo, 'r', encoding='utf-8', errors='ignore') as f:
-                linhas = f.readlines()  # Lê todas as linhas do e-mail
+                linhas = f.readlines()
                 remetente = []
                 destinatarios = []
 
@@ -35,7 +32,6 @@ for root, _, files in os.walk(diretorio_emails):
                         # Usa X-From: se From: não estiver presente
                         remetente = extrair_emails(linha)
                     elif linha.startswith(("X-To:", "X-cc:", "X-bcc:")):
-                        # Adiciona destinatários diretos, cópia e cópia oculta
                         destinatarios += extrair_emails(linha)
 
                 # Adiciona as arestas no grafo para cada combinação remetente → destinatário
@@ -48,10 +44,8 @@ for root, _, files in os.walk(diretorio_emails):
             # Caso ocorra erro ao ler algum arquivo
             print(f"Erro ao processar {caminho_arquivo}: {e}")
 
-# Mostra o total de e-mails que foram processados
 print(f"Total de e-mails processados: {total_processados}")
 
-# Salva a lista de adjacência do grafo em um arquivo .txt
 grafo.salvar_lista_adjacencia("lista_adjacencia_enron.txt")
 
 # Chama a análise geral do grafo

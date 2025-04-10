@@ -22,22 +22,22 @@ class Grafo:
                     peso = self.adj[origem][destino]
                     f.write(f"{origem} -> {destino} [peso: {peso}]\n")
 
-    # Retorna várias informações do grafo:
-    # - Quantidade de vértices
-    # - Quantidade de arestas
-    # - Vértices isolados
-    # - Top 20 com maior grau de saída
-    # - Top 20 com maior grau de entrada
+
     def analise_geral(self):
         # Junta todos os vértices que aparecem como origem ou destino
         vertices = set(self.adj.keys()) | {d for destinos in self.adj.values() for d in destinos}
         arestas = sum(len(destinos) for destinos in self.adj.values())
 
         # Identifica vértices isolados (sem entrada nem saída)
-        isolados = [v for v in vertices if all(v not in self.adj[o] for o in self.adj) and v not in self.adj]
+        isolados = []
+        for v in vertices:
+            if v not in self.adj and all(v not in vizinhos for vizinhos in self.adj.values()):
+                isolados.append(v)
 
         # Calcula grau de saída de cada vértice
-        grau_saida = {v: sum(self.adj[v].values()) for v in self.adj}
+        grau_saida = {}
+        for vertice, vizinhos in self.adj.items():
+            grau_saida[vertice] = sum(vizinhos.values())
 
         # Calcula grau de entrada de cada vértice
         grau_entrada = defaultdict(int)
@@ -46,29 +46,26 @@ class Grafo:
                 grau_entrada[destino] += self.adj[origem][destino]
 
         # Ordena os 20 maiores graus de saída e entrada
-        top_saida = sorted(grau_saida.items(), key=lambda x: x[1], reverse=True)[:20]
-        top_entrada = sorted(grau_entrada.items(), key=lambda x: x[1], reverse=True)[:20]
+        top_saida = sorted(grau_saida.items(), key=lambda item: item[1], reverse=True)[:20]
+        top_entrada = sorted(grau_entrada.items(), key=lambda item: item[1], reverse=True)[:20]
 
         return len(vertices), arestas, len(isolados), top_saida, top_entrada
 
-    # Verifica se o grafo é Euleriano
+    # Verifica se o grafo é Euleriano 
     def euleriano(self):
         grau_in = defaultdict(int)
         grau_out = defaultdict(int)
 
-        # Conta os graus de entrada e saída para cada vértice
-        for u in self.adj:
+        for u in self.adj:   # Conta os graus de entrada e saída para cada vértice
             for v in self.adj[u]:
                 grau_out[u] += self.adj[u][v]
                 grau_in[v] += self.adj[u][v]
-
-        # Se algum vértice tem grau de entrada diferente do grau de saída, não é Euleriano
-        for v in set(list(grau_in) + list(grau_out)):
+        
+        for v in set(list(grau_in) + list(grau_out)): # Se algum vértice tem grau de entrada diferente do grau de saída
             if grau_in[v] != grau_out[v]:
                 return False, f"Vértice {v} não tem grau de entrada igual ao de saída."
 
-        # Verifica se o grafo é fortemente conexo usando DFS
-        def dfs(origem, grafo):
+        def dfs(origem, grafo): # Verifica se o grafo é fortemente conexo usando DFS
             visitado = set()
             stack = [origem]
             while stack:
@@ -78,12 +75,11 @@ class Grafo:
                     stack.extend(grafo[u])
             return visitado
 
-        # Conjuntos de vértices presentes
-        todos = set(grau_out.keys()) | set(grau_in.keys())
+        todos = set(grau_out.keys()) | set(grau_in.keys()) # Conjuntos de vértices presentes
         primeiro = next(iter(todos))  # Pega um vértice inicial qualquer
 
-        # Gera a versão normal e a reversa do grafo
-        normal = {u: list(self.adj[u].keys()) for u in self.adj}
+        # Verificar se o grafo é fortemente conexo
+        normal = {u: list(self.adj[u].keys()) for u in self.adj} # Gera a versão normal e a reversa do grafo
         reverso = defaultdict(list)
         for u in self.adj:
             for v in self.adj[u]:
@@ -114,7 +110,7 @@ class Grafo:
                         heapq.heappush(heap, (novo_custo, vizinho))
         return resultado
 
-    # Calcula o diâmetro do grafo: o maior entre os menores caminhos possíveis entre pares de vértices
+    # Calcula o diâmetro do grafo (Dijkstra)
     def calcular_diametro(self):
         maior_caminho = 0
         caminho_mais_longo = []
