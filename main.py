@@ -1,21 +1,16 @@
-import os  # Usado para percorrer diretórios e arquivos
-import re  # Usado para extrair e-mails com expressões regulares
-from analisador_enron import Grafo  # Importa a classe Grafo do arquivo analisador_enron.py
+import os 
+import re 
+from analisador_enron import Grafo 
 
-# Caminho onde estão os arquivos de e-mail do Enron
 diretorio_emails = "C:/vscode/python/MetodosQuant/grafos/Tde_Grafos/Amostra Enron - 2016/brawner-s/all_documents"
 
-# Função que extrai e-mails de uma linha de texto usando expressão regular
 def extrair_emails(linha):
     return re.findall(r"[\w\.-]+@[\w\.-]+", linha.lower())
 
-# Cria uma instância do grafo
 grafo = Grafo()
 
-# Inicializa um contador de e-mails processados
 total_processados = 0
 
-# Percorre todos os arquivos dentro do diretório especificado
 for root, _, files in os.walk(diretorio_emails):
     for nome_arquivo in files:
         caminho_arquivo = os.path.join(root, nome_arquivo)
@@ -36,7 +31,6 @@ for root, _, files in os.walk(diretorio_emails):
                         # Adiciona destinatários diretos, cópia e cópia oculta
                         destinatarios += extrair_emails(linha)
 
-                # Adiciona as arestas no grafo para cada combinação remetente → destinatário
                 for r in remetente:
                     for d in destinatarios:
                         grafo.adicionar_aresta(r, d)
@@ -46,16 +40,12 @@ for root, _, files in os.walk(diretorio_emails):
             # Caso ocorra erro ao ler algum arquivo
             print(f"Erro ao processar {caminho_arquivo}: {e}\n")
 
-# Mostra o total de e-mails que foram processados
 print(f"Total de e-mails processados: {total_processados}\n")
 
-# Salva a lista de adjacência do grafo em um arquivo .txt
 grafo.salvar_lista_adjacencia("lista_adjacencia_enron.txt")
 
-# Chama a análise geral do grafo
 ordem, tamanho, isolados, top_saida, top_entrada = grafo.analise_geral()
 
-# Imprime resultados da análise
 print(f"Ordem (número de vértices): {ordem}\n")
 print(f"Tamanho (número de arestas): {tamanho}\n")
 print(f"Vértices isolados: {isolados}\n")

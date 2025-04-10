@@ -1,7 +1,6 @@
-from collections import defaultdict, deque  # defaultdict facilita criação de dicionários com valores padrão
+from collections import defaultdict, deque 
 import heapq  # heapq permite trabalhar com filas de prioridade (usado no Dijkstra)
 
-# Classe principal que representa o grafo de e-mails
 class Grafo:
     def __init__(self):
         # Estrutura de dados: dicionário de dicionários (lista de adjacências) com pesos (frequência de e-mails)
